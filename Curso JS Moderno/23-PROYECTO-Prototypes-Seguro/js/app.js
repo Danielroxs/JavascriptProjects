@@ -23,6 +23,24 @@ Seguro.prototype.cotizarSeguro = function () {
         default:
             break;
     }
+
+    // Leer el año
+    const diferencia = new Date().getFullYear() - this.year
+
+    // Cada año que la diferencia es mayor, el costo va a reducirse un 3%
+    cantidad -= ((diferencia * 3) * cantidad) / 100
+
+    /* 
+    Si el seguro es basico se multiplica por un 30% más 
+    Si el seguro es completo se multiplica por un 50% más 
+    */
+
+    if (this.tipo === 'basico') {
+        cantidad *= 1.30;
+    } else {
+        cantidad *= 1.50;
+    }
+    return cantidad
 }
 
 function UI() { }
@@ -61,6 +79,18 @@ UI.prototype.mostrarMensaje = (mensaje, tipo) => {
     }, 3000);
 }
 
+UI.prototype.mostrarResultado = (seguro, total) => {
+    // Crear el resultado 
+    const div = document.createElement('div')
+    div.classList.add('mt-10')
+    div.innerHTML = `
+        <p class="header">Tu Resumen</p>
+        <p class="font-bold">Total: ${total}</p>
+    `
+    const resultadoDiv = document.querySelector('#resultado').appendChild(div)
+
+}
+
 // Instanciar
 const ui = new UI()
 
@@ -94,8 +124,9 @@ function cotizarSeguro(e) {
 
     // Instanciar el seguro 
     const seguro = new Seguro(marca, year, tipo)
-    seguro.cotizarSeguro()
+    const total = seguro.cotizarSeguro()
 
 
     // Utilizar el prototype que va a cotizar
+    ui.mostrarResultado(seguro, total)
 }
