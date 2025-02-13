@@ -20,7 +20,19 @@ class Presupuesto {
 
     nuevoGasto(gasto) {
         this.gastos = [...this.gastos, gasto]
+        this.calcularRestante()
+    }
+
+    calcularRestante() {
+        const gastado = this.gastos.reduce((total, gasto) => total + gasto.cantidad, 0);
+        this.restante = this.presupuesto - gastado;
+        console.log(this.restante)
+    }
+
+    eliminarGasto(id) {
+        this.gastos = this.gastos.filter(gasto => gasto.id !== id)
         console.log(this.gastos)
+        this.calcularRestante()
     }
 }
 
@@ -57,7 +69,7 @@ class UI {
         }, 3000);
     }
 
-    agregarGastoListado(gastos) {
+    mostrarGastos(gastos) {
 
         this.limpiarHTML() // Elimina el HTML previo
 
@@ -72,12 +84,15 @@ class UI {
             nuevoGasto.dataset.id = id
 
             // Agregar el HTML del gasto
-            nuevoGasto.innerHTML = `${nombre} <span class="badge badge-primary badge-pill"> ${cantidad} </span>`
+            nuevoGasto.innerHTML = `${nombre} <span class="badge badge-primary badge-pill">$ ${cantidad} </span>`
 
             // Boton para borrar el gasto
             const btnBorrar = document.createElement('button')
             btnBorrar.classList.add('btn', 'btn-danger', 'borrar-gasto')
             btnBorrar.innerHTML = 'Borrar &times'
+            btnBorrar.onclick = () => {
+                eliminarGasto(id);
+            }
             nuevoGasto.appendChild(btnBorrar)
 
             // Agregar al HTML
@@ -91,6 +106,39 @@ class UI {
         // Limpiar el HTML
         while (gastoListado.firstChild) {
             gastoListado.removeChild(gastoListado.firstChild)
+        }
+    }
+
+    actualizarRestante(restante) {
+        document.querySelector('#restante').textContent = restante;
+    }
+
+    comprobarPresupuesto(presupuestoObj) {
+        const { presupuesto, restante } = presupuestoObj;
+        const restanteDiv = document.querySelector('.restante'); // ✅ Definimos la variable solo una vez
+
+        // Comprobar el 25% del presupuesto
+        if ((presupuesto / 4) > restante) {
+            restanteDiv.classList.remove('alert-success', 'alert-warning');
+            restanteDiv.classList.add('alert-danger');
+        }
+        // Comprobar el 50% del presupuesto
+        else if ((presupuesto / 2) > restante) {
+            restanteDiv.classList.remove('alert-success', 'alert-danger');
+            restanteDiv.classList.add('alert-warning');
+        }
+        // Si el presupuesto aún está por encima del 50%, restaurar a verde
+        else {
+            restanteDiv.classList.remove('alert-danger', 'alert-warning');
+            restanteDiv.classList.add('alert-success');
+        }
+
+        // Si el presupuesto llega a 0 o menos, bloquear el formulario
+        if (restante < 0) {
+            ui.imprimirAlerta('El presupuesto se ha terminado', 'error');
+            formulario.querySelector('button[type="submit"]').disabled = true;
+        } else {
+            formulario.querySelector('button[type="submit"]').disabled = false; // ✅ Habilitar nuevamente el botón si el presupuesto vuelve a estar positivo
         }
     }
 }
@@ -145,9 +193,30 @@ function agregarGasto(e) {
     ui.imprimirAlerta('Gasto agregado')
 
     // Imprimir los gastos
-    const { gastos } = presupuesto
-    ui.agregarGastoListado(gastos)
+    const { gastos, restante } = presupuesto
+    ui.mostrarGastos(gastos)
+
+    // Actualizar restante
+    ui.actualizarRestante(restante)
+
+    // Comprobar presupuesto
+    ui.comprobarPresupuesto(presupuesto)
 
     // Reinicia el formulario
     formulario.reset()
+}
+
+function eliminarGasto(id) {
+    // Elimina los gastos del objeto
+    presupuesto.eliminarGasto(id)
+
+    // Elimina los gastos del HTML
+    const { gastos, restante } = presupuesto
+    ui.mostrarGastos(gastos)
+
+    // Actualizar restante
+    ui.actualizarRestante(restante)
+
+    // Comprobar presupuesto
+    ui.comprobarPresupuesto(presupuesto)
 }
