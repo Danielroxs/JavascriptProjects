@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Administrador de Pacientes</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/bootstrap.css" />
     <link rel="stylesheet" href="css/styles.css" />
   </head>
@@ -13,7 +17,7 @@
       Administrador de Pacientes de Veterinaria
     </h2>
     <div class="container mt-5 p-5">
-      <div id="contenido" class="row">
+      <div id="contenido" class="flex flex-col md:flex-row gap-6">
         <div class="col-md-6 agregar-cita">
           <form id="nueva-cita">
             <legend class="mb-4">Datos del Paciente</legend>
@@ -93,9 +97,11 @@
             </div>
           </form>
         </div>
-        <div class="col-md-6">
-          <h2 id="administra" class="mb-4">Administra tus Citas</h2>
-          <ul id="citas" class="list-group lista-citas"></ul>
+        <div class="md:w-1/2 lg:w-3/5 md:h-screen overflow-y-scroll">
+          <h2 id="administra" class="mb-4">Listado de pacientes</h2>
+          <div id="citas">
+            <p class="text-xl mt-5 mb-10 text-center">No hay pacientes</p>
+          </div>
         </div>
       </div>
       <!--.row-->
