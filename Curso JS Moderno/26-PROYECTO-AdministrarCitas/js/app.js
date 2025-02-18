@@ -8,6 +8,7 @@ const sintomasInput = document.querySelector('#sintomas')
 
 const formulario = document.querySelector('#nueva-cita')
 
+
 // Eventos
 pacienteInput.addEventListener('change', datosCita)
 propietarioInput.addEventListener('change', datosCita)
@@ -20,8 +21,11 @@ formulario.addEventListener('submit', submitCita)
 
 const contenedorCitas = document.querySelector('#citas')
 
+let editando = false;
+
 // Objeto de cita
 const citaObj = {
+    id: generarId(),
     paciente: '',
     propietario: '',
     telefono: '',
@@ -76,6 +80,11 @@ class AdminCitas {
         this.mostrar()
     }
 
+    editar(citaActualizada) {
+        this.citas = this.citas.map(cita => cita.id === citaActualizada.id ? citaActualizada : cita)
+        this.mostrar()
+    }
+
     mostrar() {
         // Limpiar el HTML previo
         while (contenedorCitas.firstChild) {
@@ -117,8 +126,12 @@ class AdminCitas {
 
             // Botón Editar
             const btnEditar = document.createElement('button');
-            btnEditar.classList.add('bg-blue-500', 'hover:bg-blue-600', 'text-white', 'text-xs', 'font-semibold', 'uppercase', 'rounded-md', 'p-1', 'px-3');
+            btnEditar.classList.add('bg-blue-500', 'hover:bg-blue-600', 'text-white', 'text-xs', 'font-semibold', 'uppercase', 'rounded-md', 'p-1', 'px-3', 'btn-editar');
             btnEditar.innerHTML = 'Editar';
+            const clone = structuredClone(cita)
+            btnEditar.onclick = () => {
+                cargarEdicion(cita) // Llamamos a la función para cargar los datos al formulario
+            }
 
             // Botón Eliminar
             const btnEliminar = document.createElement('button');
@@ -158,23 +171,43 @@ function submitCita(e) {
     if (Object.values(citaObj).some(valor => valor.trim() === '')) { // si en los valores osea el value de las propiedades del objeto "citaObj" incluyen ""...
         new Notificacion({ texto: 'Todos los campos son obligatorios', tipo: 'error' })
         return
+    }
+
+    if (editando) {
+        citas.editar({ ...citaObj })
+        new Notificacion({ texto: 'Paciente actualizado', tipo: 'success' })
     } else {
+        citas.agregar({ ...citaObj })
         new Notificacion({ texto: 'Paciente registrado', tipo: 'success' })
     }
 
     // Crear copia del objeto citaObjpara evitar referencias compartidas
-
-    citas.agregar({ ...citaObj })
     formulario.reset()
 
     // 🔹 Reiniciar citaObj para que esté vacío después de agregar una cita
     reiniciarObjeto()
 
-
-
 }
 
 function reiniciarObjeto() {
     Object.keys(citaObj).forEach(key => citaObj[key] = '');
+    citaObj.id = generarId()
+}
+
+function generarId() {
+    return Math.random().toString(36).substring(2) + Date.now()
+}
+
+function cargarEdicion(cita) {
+    Object.assign(citaObj, cita)
+
+    pacienteInput.value = cita.paciente
+    propietarioInput.value = cita.propietario
+    telefonoInput.value = cita.telefono
+    fechaInput.value = cita.fecha
+    horaInput.value = cita.hora
+    sintomasInput.value = cita.sintomas
+
+    editando = true
 }
 
