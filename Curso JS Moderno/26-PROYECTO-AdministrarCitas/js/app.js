@@ -7,6 +7,9 @@ const horaInput = document.querySelector('#hora')
 const sintomasInput = document.querySelector('#sintomas')
 
 const formulario = document.querySelector('#nueva-cita')
+const botonFormulario = document.querySelector('#boton-formulario')
+const contenedorCitas = document.querySelector('#citas')
+
 
 
 // Eventos
@@ -18,8 +21,6 @@ horaInput.addEventListener('change', datosCita)
 sintomasInput.addEventListener('change', datosCita)
 
 formulario.addEventListener('submit', submitCita)
-
-const contenedorCitas = document.querySelector('#citas')
 
 let editando = false;
 
@@ -85,10 +86,21 @@ class AdminCitas {
         this.mostrar()
     }
 
+    eliminar(id) {
+        this.citas = this.citas.filter(cita => cita.id !== id)
+        this.mostrar()
+    }
+
     mostrar() {
         // Limpiar el HTML previo
         while (contenedorCitas.firstChild) {
             contenedorCitas.removeChild(contenedorCitas.firstChild);
+        }
+
+        // Si hay citas
+        if (this.citas.length === 0) {
+            contenedorCitas.innerHTML = `<p class="text-xl mt-5 mb-10 text-center">No hay pacientes</p>`
+            return
         }
 
         // Generando las citas
@@ -137,6 +149,7 @@ class AdminCitas {
             const btnEliminar = document.createElement('button');
             btnEliminar.classList.add('bg-red-500', 'hover:bg-red-600', 'text-white', 'text-xs', 'font-semibold', 'uppercase', 'rounded-md', 'p-1', 'px-3');
             btnEliminar.innerHTML = 'Eliminar';
+            btnEliminar.onclick = () => this.eliminar(cita.id)
 
             // Agregar botones al contenedor
             contenedorBotones.appendChild(btnEditar);
@@ -168,6 +181,9 @@ const citas = new AdminCitas()
 function submitCita(e) {
     e.preventDefault()
 
+    // Validar el formulario antes de continuar
+    if (!validarFormulario()) return
+
     if (Object.values(citaObj).some(valor => valor.trim() === '')) { // si en los valores osea el value de las propiedades del objeto "citaObj" incluyen ""...
         new Notificacion({ texto: 'Todos los campos son obligatorios', tipo: 'error' })
         return
@@ -186,6 +202,9 @@ function submitCita(e) {
 
     // 🔹 Reiniciar citaObj para que esté vacío después de agregar una cita
     reiniciarObjeto()
+
+    botonFormulario.textContent = 'Crear Cita'
+    editando = false;
 
 }
 
@@ -209,5 +228,45 @@ function cargarEdicion(cita) {
     sintomasInput.value = cita.sintomas
 
     editando = true
+
+    botonFormulario.textContent = 'Guardar cambios'
+}
+
+function validarFormulario() {
+    // Expresiones regulares
+    const regexTexto = /^[a-zA-Z\s]+$/;
+    const regexTelefono = /^[0-9]{10,15}$/; // Teléfonos de 10 a 15 dígitos
+
+    if (!regexTexto.test(pacienteInput.value)) {
+        new Notificacion({ texto: 'Nombre del paciente no válido', tipo: 'error' });
+        return false;
+    }
+
+    if (!regexTexto.test(propietarioInput.value)) {
+        new Notificacion({ texto: 'Nombre del propietario no válido', tipo: 'error' });
+        return false;
+    }
+
+    if (!regexTelefono.test(telefonoInput.value)) {
+        new Notificacion({ texto: 'Teléfono inválido (Debe contener entre 10 y 15 números)', tipo: 'error' });
+        return false;
+    }
+
+    if (!fechaInput.value || new Date(fechaInput.value) < new Date()) {
+        new Notificacion({ texto: 'Fecha inválida (Debe ser hoy o en el futuro)', tipo: 'error' });
+        return false;
+    }
+
+    if (!horaInput.value) {
+        new Notificacion({ texto: 'Debe seleccionar una hora válida', tipo: 'error' });
+        return false;
+    }
+
+    if (sintomasInput.value.trim() === '') {
+        new Notificacion({ texto: 'Debe ingresar síntomas', tipo: 'error' });
+        return false;
+    }
+
+    return true; // Si todo es correcto, retorna `true`
 }
 
