@@ -1,14 +1,18 @@
-function conectarDB() {
-    const abrirConexion = window.indexedDB.open('crm', 1)
+function conectarDB(callback) {
+    const abrirConexion = window.indexedDB.open('crm', 1);
 
     abrirConexion.onerror = function () {
-        console.log('Hubo un error')
-    }
+        console.log('❌ Hubo un error al abrir la base de datos');
+    };
 
     abrirConexion.onsuccess = function () {
-        DB = abrirConexion.result
-    }
+        DB = abrirConexion.result;
+        console.log('✅ Base de datos conectada:', DB);
+
+        if (callback) callback(); // Llamar al callback cuando DB esté lista
+    };
 }
+
 
 function imprimirAlerta(mensaje, tipo) {
 
