@@ -44,6 +44,8 @@ function mostrarMensaje(mensaje) {
 
 function consultarAPI(ciuad, pais) {
 
+    Spinner() // Muestra un spinner de carga
+
     const appId = '6f2dc9aadc847b5be32b771eea8ae1d1'
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciuad},${pais}&appid=${appId}`
@@ -112,4 +114,28 @@ function limpiarHTML() {
 
 function resetearFormulario() {
     formulario.reset() // Reinicia todos los campos del formulario
+}
+
+function Spinner() {
+
+    limpiarHTML()
+
+    const divSpinner = document.createElement('DIV')
+    divSpinner.classList.add('sk-circle')
+    divSpinner.innerHTML = `
+  <div class="sk-circle1 sk-child"></div>
+  <div class="sk-circle2 sk-child"></div>
+  <div class="sk-circle3 sk-child"></div>
+  <div class="sk-circle4 sk-child"></div>
+  <div class="sk-circle5 sk-child"></div>
+  <div class="sk-circle6 sk-child"></div>
+  <div class="sk-circle7 sk-child"></div>
+  <div class="sk-circle8 sk-child"></div>
+  <div class="sk-circle9 sk-child"></div>
+  <div class="sk-circle10 sk-child"></div>
+  <div class="sk-circle11 sk-child"></div>
+  <div class="sk-circle12 sk-child"></div>
+    `
+
+    resultado.appendChild(divSpinner)
 }
