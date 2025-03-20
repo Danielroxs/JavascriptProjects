@@ -149,15 +149,21 @@ function agregarPlatillo(producto) {
     // Limpiar el HTML
     limpiarHTML()
 
-    // Mostrar el resumen
-    actualizarResumen();
+    if (cliente.pedido.length) {
+        // Mostrar el resumen
+        actualizarResumen();
+    } else {
+        mensajePedidoVacio()
+    }
+
+
 }
 
 function actualizarResumen() {
     const contenido = document.querySelector('#resumen .contenido')
 
     const resumen = document.createElement('DIV')
-    resumen.classList.add('col-md-6', 'card', 'py-5', 'px-3', 'shadow')
+    resumen.classList.add('col-md-6', 'card', 'py-2', 'px-3', 'shadow')
 
     // Informacion de la mesa
     const mesa = document.createElement('P')
@@ -228,6 +234,16 @@ function actualizarResumen() {
         subtotalValor.classList.add('fw-normal')
         subtotalValor.textContent = calcularSubtotal(precio, cantidad);
 
+        // Boton para eliminar
+        const btnEliminar = document.createElement('BUTTON')
+        btnEliminar.classList.add('btn', 'btn-danger')
+        btnEliminar.textContent = "Eliminar del Pedido"
+
+        // Funcion para eliminar del pedido
+        btnEliminar.addEventListener('click', () => {
+            eliminarProducto(id)
+        })
+
         // Agregar valores a sus contenedores
         cantidadEl.appendChild(cantidadValor)
         precioEl.appendChild(precioValor)
@@ -238,18 +254,22 @@ function actualizarResumen() {
         lista.appendChild(cantidadEl)
         lista.appendChild(precioEl)
         lista.appendChild(subtotalEl)
+        lista.appendChild(btnEliminar)
 
         // Agregar Lista al Grupo Principal
         grupo.appendChild(lista)
     })
 
     // Agregar al contenido
+    resumen.appendChild(heading)
     resumen.appendChild(mesa)
     resumen.appendChild(hora)
-    resumen.appendChild(heading)
     resumen.appendChild(grupo)
 
     contenido.appendChild(resumen)
+
+    // Mostrar formulario de propinas
+    formularioPropinas()
 }
 
 
@@ -262,4 +282,192 @@ function limpiarHTML() {
 
 function calcularSubtotal(precio, cantidad) {
     return `$${precio * cantidad}`;
+}
+
+function eliminarProducto(id) {
+    const { pedido } = cliente
+    const resultado = pedido.filter(articulo => articulo.id !== id)
+    cliente.pedido = [...resultado]
+
+    // Limpiar el HTML
+    limpiarHTML()
+
+    if (cliente.pedido.length) {
+        // Mostrar el resumen
+        actualizarResumen();
+    } else {
+        mensajePedidoVacio()
+    }
+
+    // El producto se elimino por lo tanto regresamos la cantidad a 0 en el formulario
+    const productoEliminado = `#producto-${id}`
+    const inputElimindado = document.querySelector(productoEliminado)
+    inputElimindado.value = 0
+}
+
+function mensajePedidoVacio() {
+    const contenido = document.querySelector('#resumen .contenido')
+
+    const texto = document.createElement('P')
+    texto.classList.add('text-center')
+    texto.textContent = 'Añade los elementos del pedido'
+
+    contenido.appendChild(texto)
+}
+
+function formularioPropinas() {
+    const contenido = document.querySelector('#resumen .contenido')
+
+    const formulario = document.createElement('DIV')
+    formulario.classList.add('col-md-6', 'formulario')
+
+    const divFormulario = document.createElement('DIV')
+    divFormulario.classList.add('card', 'py-2', 'px-3', 'shadow')
+
+    const heading = document.createElement('H3')
+    heading.classList.add('my-4', 'text-center')
+    heading.textContent = 'Propina'
+
+    // Radio Button 10%
+    const radio10 = document.createElement('INPUT')
+    radio10.type = 'radio'
+    radio10.name = 'propina'
+    radio10.value = "10"
+    radio10.classList.add('form-check-input')
+    radio10.onclick = calcularPropina
+
+    const radio10Label = document.createElement('LABEL')
+    radio10Label.textContent = '10%'
+    radio10Label.classList.add('form-check-label')
+
+    const radio10Div = document.createElement('DIV')
+    radio10Div.classList.add('form-check')
+
+    radio10Div.appendChild(radio10)
+    radio10Div.appendChild(radio10Label)
+
+    // Radio Button 15%
+    const radio15 = document.createElement('INPUT')
+    radio15.type = 'radio'
+    radio15.name = 'propina'
+    radio15.value = "15"
+    radio15.classList.add('form-check-input')
+    radio15.onclick = calcularPropina
+
+    const radio15Label = document.createElement('LABEL')
+    radio15Label.textContent = '15%'
+    radio15Label.classList.add('form-check-label')
+
+    const radio15Div = document.createElement('DIV')
+    radio15Div.classList.add('form-check')
+
+    radio15Div.appendChild(radio15)
+    radio15Div.appendChild(radio15Label)
+
+    // Radio Button 20%
+    const radio20 = document.createElement('INPUT')
+    radio20.type = 'radio'
+    radio20.name = 'propina'
+    radio20.value = "20"
+    radio20.classList.add('form-check-input')
+    radio20.onclick = calcularPropina
+
+    const radio20Label = document.createElement('LABEL')
+    radio20Label.textContent = '20%'
+    radio20Label.classList.add('form-check-label')
+
+    const radio20Div = document.createElement('DIV')
+    radio20Div.classList.add('form-check')
+
+    radio20Div.appendChild(radio20)
+    radio20Div.appendChild(radio20Label)
+
+    // Agregar al Div Principal
+    divFormulario.appendChild(heading)
+    divFormulario.appendChild(radio10Div)
+    divFormulario.appendChild(radio15Div)
+    divFormulario.appendChild(radio20Div)
+
+    // Agregar al Formulario
+    formulario.appendChild(divFormulario)
+
+    contenido.appendChild(formulario)
+}
+
+function calcularPropina() {
+
+    const { pedido } = cliente
+    let subtotal = 0
+
+    // Calcular el Subtotal a pagar
+    pedido.forEach(articulo => {
+        subtotal += articulo.cantidad * articulo.precio;
+    })
+
+    // Seleccionar el radioButton con la propina del cliente
+    const propinaSeleccionada = document.querySelector('[name="propina"]:checked').value
+
+    // Calcular la propina
+    const propina = ((subtotal * +(propinaSeleccionada)) / 100)
+
+
+    // Calcular el Total a Pagar
+    const total = subtotal + propina;
+
+    // Mostrar Total en HTML
+    mostrarTotalHTML(subtotal, total, propina)
+}
+
+function mostrarTotalHTML(subtotal, total, propina) {
+
+    // Div Principal
+    const divTotales = document.createElement('DIV')
+    divTotales.classList.add('total-pagar', 'my-5')
+
+    // Subtotal
+    const subtotalParrafo = document.createElement('P')
+    subtotalParrafo.classList.add('fs-4', 'fw-bold', 'mt-2')
+    subtotalParrafo.textContent = 'Subtotal Consumo: '
+
+    const subtotalSpan = document.createElement('SPAN')
+    subtotalSpan.classList.add('fw-normal')
+    subtotalSpan.textContent = `$${subtotal}`
+
+    subtotalParrafo.appendChild(subtotalSpan)
+
+    // Propina
+    const propinaParrafo = document.createElement('P')
+    propinaParrafo.classList.add('fs-4', 'fw-bold', 'mt-2')
+    propinaParrafo.textContent = 'Propina: '
+
+    const propinaSpan = document.createElement('SPAN')
+    propinaSpan.classList.add('fw-normal')
+    propinaSpan.textContent = `$${propina}`
+
+    propinaParrafo.appendChild(propinaSpan)
+
+    // Total
+    const totalParrafo = document.createElement('P')
+    totalParrafo.classList.add('fs-4', 'fw-bold', 'mt-2')
+    totalParrafo.textContent = 'Total a Pagar: '
+
+    const totalSpan = document.createElement('SPAN')
+    totalSpan.classList.add('fw-normal')
+    totalSpan.textContent = `$${total}`
+
+    totalParrafo.appendChild(totalSpan)
+
+    // Eliminar el ultimo resultado
+    const totalPagarDiv = document.querySelector('.total-pagar')
+
+    if (totalPagarDiv) {
+        totalPagarDiv.remove()
+    }
+
+    divTotales.appendChild(subtotalParrafo)
+    divTotales.appendChild(propinaParrafo)
+    divTotales.appendChild(totalParrafo)
+
+    const formulario = document.querySelector('.formulario > div')
+    formulario.appendChild(divTotales)
 }
