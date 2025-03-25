@@ -1,4 +1,4 @@
-import { obtenerCliente, eliminarCliente } from "./API.js";
+import { obtenerClientes, eliminarCliente } from "./API.js";
 
 (function () {
     const listado = document.querySelector('#listado-clientes')
@@ -8,7 +8,7 @@ import { obtenerCliente, eliminarCliente } from "./API.js";
     listado.addEventListener('click', confirmarEliminar)
 
     async function mostrarClientes() {
-        const clientes = await obtenerCliente()
+        const clientes = await obtenerClientes()
 
         clientes.forEach(cliente => {
             const { nombre, email, telefono, empresa, id } = cliente;

@@ -1,10 +1,31 @@
 {
   "clientes": [
     {
+      "nombre": "Dan Rox",
+      "email": "daniel@email.com",
+      "telefono": "5435344",
+      "empresa": "Rox",
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "nombre": "Juan",
+      "email": "juan@email.com",
+      "telefono": "6456456456",
+      "empresa": "Rox"
+    },
+    {
+      "id": "3",
+      "nombre": "Pepe",
+      "email": "pepe@email.com",
+      "telefono": "656456",
+      "empresa": "Rox"
+    },
+    {
       "id": "4",
-      "nombre": "Miguel",
+      "nombre": "Prueba",
       "email": "email@email.com",
-      "telefono": "534534",
+      "telefono": "53453",
       "empresa": "Rox"
     }
   ]
