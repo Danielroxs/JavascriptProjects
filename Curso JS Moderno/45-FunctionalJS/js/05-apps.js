@@ -9,16 +9,10 @@ const carrito = [
     { nombre: 'Laptop', precio: 800 },
 ];
 
-/* const resultado = carrito.filter(articulo => {
-    return articulo.precio > 400
-})
+const obtenerNombres = p => p.nombre
+const resultado = carrito.map(obtenerNombres)
+console.log(resultado)
 
-console.log(resultado) */
-
-const mayor400 = producto => {
-    return producto.precio > 400
-}
-
+const mayor400 = p => p.precio > 400
 const resultado2 = carrito.filter(mayor400)
-
 console.log(resultado2)
