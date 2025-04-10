@@ -1,0 +1,42 @@
+# Archivos de entorno
+.env
+
+# Dependencias de Node.js
+node_modules/
+
+# Archivos de logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Caché de VSCode
+.vscode/
+
+# Carpetas del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de compilación o temporales
+dist/
+build/
+*.tmp
+*.log
+
+# Configuración de bases de datos locales
+*.sqlite
+*.sqlite3
+
+# Archivos de configuración específicos del sistema operativo
+.idea/
+*.swp
+*.swo
+
+# Archivos de pruebas y cobertura
+coverage/
+*.test.js
+*.spec.js
+
+# Archivos de empaquetado
+*.zip
+*.tar
+*.gz
