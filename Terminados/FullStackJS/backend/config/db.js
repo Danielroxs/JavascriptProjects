@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const conectarDB = async () => {
     try {
-        const db = await mongoose.connect('mongodb+srv://watashiwa666:bBbsBDJsIucKkbel@cluster0.lyf66od.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+        const db = await mongoose.connect(process.env.MONGO_URI)
 
         const url = `${db.connection.host}:${db.connection.port}`
         console.log(`MongoDB conectado en: ${url}`)
