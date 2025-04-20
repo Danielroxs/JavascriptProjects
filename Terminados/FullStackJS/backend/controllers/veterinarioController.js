@@ -28,13 +28,43 @@ const perfil = (req, res) => {
     res.json({ msg: 'Mostrando Perfil...' })
 }
 
-const confirmar = (req, res) => {
-    console.log(req.params.token)
-    res.json({ msg: 'Confirmando cuenta...' })
+const confirmar = async (req, res) => {
+    const { token } = req.params;
+
+    // Buscar el usuario con el token proporcionado
+    const usuarioConfirmar = await Veterinario.findOne({ token: token });
+
+    // Si no se encuentra el usuario, devolver un error
+    if (!usuarioConfirmar) {
+        const error = new Error('Token no válido');
+        return res.status(404).json({ msg: error.message });
+    }
+
+    try {
+        // Modificar las propiedades del usuario
+        usuarioConfirmar.token = null;
+        usuarioConfirmar.confirmado = true;
+
+        // Guardar los cambios en la base de datos
+        await usuarioConfirmar.save();
+
+        // Responder al cliente
+        res.json({ msg: "Usuario confirmado correctamente" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: "Hubo un error al confirmar el usuario" });
+    }
+};
+
+const autenticar = (req, res) => {
+    console.log(req.body)
+
+    res.json({ msg: "Autenticando..." })
 }
 
 export {
     registrar,
     perfil,
-    confirmar
+    confirmar,
+    autenticar
 }
