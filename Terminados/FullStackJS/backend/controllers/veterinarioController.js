@@ -56,10 +56,30 @@ const confirmar = async (req, res) => {
     }
 };
 
-const autenticar = (req, res) => {
-    console.log(req.body)
+const autenticar = async (req, res) => {
+    const { email, password } = req.body
 
-    res.json({ msg: "Autenticando..." })
+    // Comprobar si el usuario existe 
+    const usuario = await Veterinario.findOne({ email })
+
+    if (!usuario) {
+        const error = new Error('El usuario no existe')
+        return res.status(400).json({ msg: error.message })
+    }
+
+    // El usuario no esta confirmado
+    if (!usuario.confirmado) {
+        const error = new Error('Tu cuenta no ha sido confirmada')
+        return res.status(403).json({ msg: error.message })
+    }
+
+    // Revisar el password
+    if (await usuario.comprobarPassword(password)) {
+        // Autenticar JWT
+    } else {
+        const error = new Error('El Password es incorrecto')
+        return res.status(403).json({ msg: error.message })
+    }
 }
 
 export {
