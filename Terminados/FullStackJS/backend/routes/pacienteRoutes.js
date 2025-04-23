@@ -25,7 +25,7 @@ router.route('/')
     .get(checkAuth, obtenerPacientes) // Ruta para obtener pacientes
 
 router
-    .route(':id')
+    .route('/:id')
     .get(checkAuth, obtenerPaciente)
     .put(checkAuth, actualizarPaciente)
     .delete(checkAuth, eliminarPaciente)
