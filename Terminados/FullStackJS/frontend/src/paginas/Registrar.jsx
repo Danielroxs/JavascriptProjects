@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Alerta from "../components/Alerta";
+import axios from "axios";
 
 const Registrar = () => {
   const [nombre, setNombre] = useState("");
@@ -7,20 +9,43 @@ const Registrar = () => {
   const [password, setPassword] = useState("");
   const [repetirPassword, setRepetirPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const [alerta, setAlerta] = useState({});
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if ([nombre, email, password, repetirPassword].includes("")) {
-      console.log("Existen campos vacios");
+      setAlerta({ msg: "Todos los campos son obligatorios", error: true });
       return;
     }
     if (password !== repetirPassword) {
-      console.log("Los password son diferentes");
+      setAlerta({ msg: "Los passwords no coinciden", error: true });
+      return;
+    }
+    if (password.length < 6) {
+      setAlerta({
+        msg: "El password es muy corto, agrega mínimo 6 caracteres",
+        error: true,
+      });
       return;
     }
 
-    if (password.length < 6) {
-      console.log("El password es muy corto, agrega minimo 6 caracteres");
+    // Si todo está bien, limpia la alerta
+    setAlerta({});
+
+    // Crear usuario en el backend
+    try {
+      const url = "http://localhost:4000/api/veterinarios";
+      await axios.post(url, { nombre, email, password });
+      setAlerta({
+        msg: "Cuenta creada, Revisa tu email",
+        error: false,
+      });
+    } catch (error) {
+      setAlerta({
+        msg: error.response.data.msg || "Hubo un error",
+        error: true,
+      });
     }
   };
 
@@ -34,6 +59,7 @@ const Registrar = () => {
       </div>
 
       <div className="mt-20 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white">
+        <Alerta alerta={alerta} />
         <form action="" onSubmit={handleSubmit}>
           <div className="my-5">
             <label className="uppercase text-gray-600 block text-xl font-bold">
