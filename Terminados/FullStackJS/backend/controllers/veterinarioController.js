@@ -40,22 +40,25 @@ const perfil = (req, res) => {
 // Función para confirmar un usuario mediante un token
 const confirmar = async (req, res) => {
     const { token } = req.params;
+    console.log("este es el token", token)
 
-    const usuarioConfirmar = await Veterinario.findOne({ token: token });
+    // Buscar al usuario por el token
+    const usuarioConfirmar = await Veterinario.findOne({ token });
 
+    // Caso 1: Token no válido
     if (!usuarioConfirmar) {
-        const error = new Error('Token no válido');
-        return res.status(404).json({ msg: error.message });
+        const error = new Error("Token no valido")
+        return res.status(404).json({ msg: error.message })
     }
 
     try {
-        usuarioConfirmar.token = null;
-        usuarioConfirmar.confirmado = true;
+        usuarioConfirmar.token = null; // Eliminar el token
+        usuarioConfirmar.confirmado = true; // Marcar como confirmado
         await usuarioConfirmar.save();
+
         res.json({ msg: "Usuario confirmado correctamente" });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ msg: "Hubo un error al confirmar el usuario" });
     }
 };
 
