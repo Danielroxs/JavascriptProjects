@@ -1,9 +1,42 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+import Alerta from "../components/Alerta";
 
 const ConfirmarCuenta = () => {
-  const params = useParams();
+  const [cuentaConfirmada, setCuentaConfirmada] = useState(false);
+  const [cargando, setCargando] = useState(true);
+  const [alerta, setAlerta] = useState({});
 
-  console.log(params);
+  const params = useParams();
+  const { id } = params;
+
+  useEffect(() => {
+    const confirmarCuenta = async () => {
+      try {
+        const url = `http://localhost:4000/api/veterinarios/confirmar/${id}`;
+        const { data } = await axios.get(url);
+
+        // Si el token es válido y el usuario fue confirmado
+        setCuentaConfirmada(true);
+        setAlerta({
+          msg: data.msg, // Mensaje del backend
+          error: false, // No es un error
+        });
+      } catch (error) {
+        // Si el token no es válido o ya fue utilizado
+        setAlerta({
+          msg:
+            error.response?.data?.msg || "Hubo un error al confirmar la cuenta",
+          error: true, // Es un error
+        });
+      }
+
+      setCargando(false); // Finalizar la carga
+    };
+
+    confirmarCuenta();
+  }, [id]);
 
   return (
     <>
@@ -14,7 +47,23 @@ const ConfirmarCuenta = () => {
         </h1>
       </div>
 
-      <div className="mt-20 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white"></div>
+      <div className="mt-20 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white">
+        {!cargando & cuentaConfirmada ? (
+          <p className="text-center text-green-600 font-bold">
+            ¡Tu cuenta ha sido confirmada correctamente!
+          </p>
+        ) : (
+          <p className="text-center text-red-600 font-bold">
+            "Token no valido o ya usado"
+          </p>
+        )}
+
+        {cuentaConfirmada && (
+          <Link className="block text-center my-5 text-gray-500" to="/">
+            Iniciar Sesión
+          </Link>
+        )}
+      </div>
     </>
   );
 };
