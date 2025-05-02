@@ -48,7 +48,7 @@ const ConfirmarCuenta = () => {
       </div>
 
       <div className="mt-20 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white">
-        {!cargando & cuentaConfirmada ? (
+        {/* {!cargando & cuentaConfirmada ? (
           <p className="text-center text-green-600 font-bold">
             ¡Tu cuenta ha sido confirmada correctamente!
           </p>
@@ -56,7 +56,8 @@ const ConfirmarCuenta = () => {
           <p className="text-center text-red-600 font-bold">
             "Token no valido o ya usado"
           </p>
-        )}
+        )} */}
+        {!cargando && <Alerta alerta={alerta} />}
 
         {cuentaConfirmada && (
           <Link className="block text-center my-5 text-gray-500" to="/">
