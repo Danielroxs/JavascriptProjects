@@ -4,12 +4,14 @@ import cors from 'cors'
 import conectarDB from './config/db.js'
 import veterinarioRoutes from './routes/veterinarioRoutes.js'
 import pacienteRoutes from './routes/pacienteRoutes.js'
+import limpiarTokensExpirados from './cronJobs/limpiarTokensExpirados.js'
 
 const app = express()
 app.use(express.json())
 
 dotenv.config()
 
+// Conectar a la BD
 conectarDB()
 
 const dominiosPermitidos = ["http://localhost:5173"]

@@ -40,7 +40,6 @@ const perfil = (req, res) => {
 // Función para confirmar un usuario mediante un token
 const confirmar = async (req, res) => {
     const { token } = req.params;
-    console.log("este es el token", token)
 
     // Buscar al usuario por el token
     const usuarioConfirmar = await Veterinario.findOne({ token });
@@ -52,7 +51,7 @@ const confirmar = async (req, res) => {
     }
 
     try {
-        usuarioConfirmar.token = null; // Eliminar el token
+        /* usuarioConfirmar.token = null; */ // Eliminar el token
         usuarioConfirmar.confirmado = true; // Marcar como confirmado
         await usuarioConfirmar.save();
 
