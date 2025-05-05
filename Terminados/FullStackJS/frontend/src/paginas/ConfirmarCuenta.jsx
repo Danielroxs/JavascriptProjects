@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
 import Alerta from "../components/Alerta";
+import clienteAxios from "../config/axios";
 
 const ConfirmarCuenta = () => {
   const [cuentaConfirmada, setCuentaConfirmada] = useState(false);
@@ -14,8 +14,8 @@ const ConfirmarCuenta = () => {
   useEffect(() => {
     const confirmarCuenta = async () => {
       try {
-        const url = `http://localhost:4000/api/veterinarios/confirmar/${id}`;
-        const { data } = await axios.get(url);
+        const url = `/veterinarios/confirmar/${id}`;
+        const { data } = await clienteAxios.get(url);
 
         // Si el token es válido y el usuario fue confirmado
         setCuentaConfirmada(true);
