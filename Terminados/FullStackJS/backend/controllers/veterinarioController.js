@@ -98,6 +98,7 @@ const olvidePassword = async (req, res) => {
 
     try {
         existeVeterinario.token = generarId();
+        existeVeterinario.tokenExpiracion = new Date(Date.now() + 3600000)
         await existeVeterinario.save();
 
         // Enviar email con instrucciones
