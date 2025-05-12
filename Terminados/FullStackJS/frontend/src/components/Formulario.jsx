@@ -11,9 +11,7 @@ const Formulario = () => {
 
   const [alerta, setAlerta] = useState({});
 
-  const { pacientes } = usePacientes();
-
-  console.log(pacientes);
+  const { guardarPaciente } = usePacientes();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,15 +21,22 @@ const Formulario = () => {
       setAlerta({ msg: "Todos los campos son obligatorios", error: true });
       return;
     }
+
+    setAlerta({});
+
+    guardarPaciente({ nombre, propietario, email, fecha, sintomas });
   };
 
   const { msg } = alerta;
 
   return (
     <>
-      <p className="text-lg text-center mb-10">
-        Agrega tus pacientes {""}
-        <span className="text-indigo-600 font-bold">Administralos</span>
+      <h2 className="font-black text-3xl text-center">
+        Administrador Pacientes
+      </h2>
+      <p className="text-xl mt-5 mb-10 text-center">
+        Agrega tus Pacientes y {""}{" "}
+        <span className="text-indigo-600 font-bold">Admninistralos</span>
       </p>
 
       <form
