@@ -14,9 +14,12 @@ const ListadoPacientes = () => {
             <span className="text-indigo-600 font-bold">Pacientes y Citas</span>
           </p>
 
-          {pacientes.map((paciente) => (
-            <Paciente key={paciente._id} paciente={paciente} />
-          ))}
+          {pacientes.map(
+            (paciente) =>
+              paciente?._id && (
+                <Paciente key={paciente._id} paciente={paciente} />
+              )
+          )}
         </>
       ) : (
         <>
