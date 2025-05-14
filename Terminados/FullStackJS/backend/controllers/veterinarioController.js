@@ -35,7 +35,7 @@ const registrar = async (req, res) => {
 // Función para obtener el perfil del veterinario autenticado
 const perfil = (req, res) => {
     const { veterinario } = req;
-    res.json({ perfil: veterinario });
+    res.json(veterinario);
 };
 
 // Función para confirmar un usuario mediante un token
@@ -79,7 +79,13 @@ const autenticar = async (req, res) => {
     }
 
     if (await usuario.comprobarPassword(password)) {
-        res.json({ token: generarJWT(usuario.id) });
+        res.json({
+            _id: usuario._id,
+            nombre: usuario.nombre,
+            email: usuario.email,
+            confirmado: usuario.confirmado,
+            token: generarJWT(usuario.id), // Generar el token
+        });
     } else {
         const error = new Error('El Password es incorrecto');
         return res.status(403).json({ msg: error.message });
@@ -150,6 +156,44 @@ const nuevoPassword = async (req, res) => {
     }
 };
 
+const actualizarPerfil = async (req, res) => {
+    const veterinario = await Veterinario.findById(req.params.id);
+    if (!veterinario) {
+        const error = new Error('Hubo un error');
+        return res.status(400).json({ msg: error.message });
+    }
+
+    const { email } = req.body;
+    if (veterinario.email !== req.body.email) {
+        const existeEmail = await Veterinario.findOne({ email })
+        if (existeEmail) {
+            const error = new Error("Este email ya esta en uso")
+            return res.status(400).json({ msg: error.msg })
+        }
+    }
+
+    try {
+        if (req.body.nombre !== undefined && req.body.nombre.trim() !== "") {
+            veterinario.nombre = req.body.nombre;
+        }
+        if (req.body.email !== undefined && req.body.email.trim() !== "") {
+            veterinario.email = req.body.email;
+        }
+        if (req.body.web !== undefined) {
+            veterinario.web = req.body.web; // Permite guardar cadenas vacías
+        }
+        if (req.body.telefono !== undefined) {
+            veterinario.telefono = req.body.telefono;
+        }
+
+        const veterinarioActualizado = await veterinario.save();
+
+        res.json({ msg: "Perfil actualizado correctamente", veterinario: veterinarioActualizado });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // Exportar las funciones para usarlas en otros archivos
 export {
     registrar,
@@ -158,5 +202,6 @@ export {
     autenticar,
     olvidePassword,
     comprobarToken,
-    nuevoPassword
+    nuevoPassword,
+    actualizarPerfil
 };
