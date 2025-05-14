@@ -1,36 +1,38 @@
 import { createContext, useState, useEffect } from "react";
 import clienteAxios from "../config/axios";
+import useAuth from "../hooks/useAuth";
 
 const PacientesContext = createContext();
 
 export const PacientesProvider = ({ children }) => {
   const [pacientes, setPacientes] = useState([]);
   const [paciente, setPaciente] = useState({});
+  const { auth } = useAuth();
 
   useEffect(() => {
     const obtenerPacientes = async () => {
+      if (!auth._id) return;
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.log("No hay token disponible");
+        return;
+      }
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.log("No hay token disponible");
-          return;
-        }
-
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        };
-
         const { data } = await clienteAxios("/pacientes", config);
         setPacientes(data);
       } catch (error) {
         console.log(error?.reponse?.data?.msg);
       }
     };
-    obtenerPacientes();
-  }, []);
+    obtenerPacientes([auth]);
+  }, [auth]);
 
   const guardarPaciente = async (paciente) => {
     const token = localStorage.getItem("token");
