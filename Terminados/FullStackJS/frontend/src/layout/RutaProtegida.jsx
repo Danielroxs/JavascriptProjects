@@ -10,8 +10,6 @@ const RutaProtegida = () => {
 
   return (
     <>
-      <h1>Esta es una ruta protegida</h1>
-
       <Header />
       {auth._id ? (
         <main className="container mx-auto mt-10">
