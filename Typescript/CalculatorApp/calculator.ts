@@ -78,3 +78,11 @@ type InvestmentData = {
   const results = calculateInvestment(investmentData);
   printResults(results);
   
+
+  const add = (a: number, b: number): number => a + b;
+
+const printOutput = (output: number | string): void => {
+  console.log(output);
+};
+
+printOutput(add(5, 2)); // aquí pasa 7 a printOutput
