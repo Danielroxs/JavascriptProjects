@@ -5,6 +5,7 @@ class User {
     /* name: string;
     age: number;
  */
+    hobbies = [];
     constructor(name, age) {
         this.name = name;
         this.age = age;
@@ -13,6 +14,4 @@ class User {
     }
 }
 const dan = new User('Dan', 32);
-
-console.log(dan);
-console.log("Estoy vivo!");
+dan.hobbies = ['hola', 'Dan'];
