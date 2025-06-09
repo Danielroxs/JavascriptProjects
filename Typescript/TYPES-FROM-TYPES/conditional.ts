@@ -23,7 +23,7 @@ function getFullName<T extends object>(person: T ): FullNameOrNothing<T> {
     }
     throw new Error('No first name and/or last name found')
 }
-
+/* 
 const name1 = getFullName({})
 const name2 = getFullName({firstName: 'Rox'})
-const name3 = getFullName({firstName: 'Rox', lastName: 'Dan'})
+const name3 = getFullName({firstName: 'Rox', lastName: 'Dan'}) */
