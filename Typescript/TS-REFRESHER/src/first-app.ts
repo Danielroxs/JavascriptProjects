@@ -28,3 +28,43 @@ creds = {
     password: 'abc',
     email: 'email@email.com'
 }
+
+// tipos literales
+
+type Role = 'admin' | 'user' | 'editor';
+
+let role: Role
+
+role = 'admin'
+// Type guards
+function performAction(action: string, role: Role){
+    if(role === "admin" && typeof role === 'string'){
+        //...
+    }
+}
+
+let roles: Array<Role>
+
+roles = ['admin']
+
+type DataStorage<T> = {
+    storage: T[],
+    add: (data: T) => void
+}
+
+const textStorage: DataStorage<string> = {
+    storage: [],
+    add(data){
+        this.storage.push(data)
+    }
+}
+
+function merge<T, U>(a: T, b: U){
+    return {
+        ...a,
+        ...b
+    }
+}
+
+const resultado = merge({name: 'Daniel'},{age: 32})
+
