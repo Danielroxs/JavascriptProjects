@@ -1,17 +1,11 @@
 //import Input from "./components/Input";
 import Button from "./components/Button";
+import Container from "./components/Container";
 
 function App() {
   return (
     <main>
-      <p>
-        <Button el="button">A Button</Button>
-      </p>
-      <p>
-        <Button el="anchor" href="https:google.com">
-          A Link
-        </Button>
-      </p>
+      <Container as={Button} />
     </main>
   );
 }
