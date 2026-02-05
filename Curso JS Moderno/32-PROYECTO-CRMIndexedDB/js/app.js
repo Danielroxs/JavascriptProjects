@@ -1,55 +1,53 @@
 (function () {
-    let DB;
+  const listadoClientes = document.querySelector("#listado-clientes");
 
-    const listadoClientes = document.querySelector('#listado-clientes');
-
-    document.addEventListener('DOMContentLoaded', () => {
-        conectarDB(() => {
-            obtenerClientes();
-        });
-
-        listadoClientes.addEventListener('click', eliminarRegistro);
+  document.addEventListener("DOMContentLoaded", () => {
+    conectarDB(() => {
+      obtenerClientes();
     });
 
-    function eliminarRegistro(e) {
-        if (e.target.classList.contains('eliminar')) {
-            const idEliminar = Number(e.target.dataset.cliente);
+    listadoClientes.addEventListener("click", eliminarRegistro);
+  });
 
-            const confirmar = confirm('¿Deseas eliminar este cliente?');
+  function eliminarRegistro(e) {
+    if (e.target.classList.contains("eliminar")) {
+      const idEliminar = Number(e.target.dataset.cliente);
 
-            if (confirmar) {
-                const transaction = DB.transaction(['crm'], 'readwrite');
-                const objectStore = transaction.objectStore('crm');
+      const confirmar = confirm("¿Deseas eliminar este cliente?");
 
-                objectStore.delete(idEliminar);
+      if (confirmar) {
+        const transaction = DB.transaction(["crm"], "readwrite");
+        const objectStore = transaction.objectStore("crm");
 
-                transaction.oncomplete = function () {
-                    console.log('✅ Cliente eliminado correctamente');
-                    e.target.parentElement.parentElement.remove();
-                };
+        objectStore.delete(idEliminar);
 
-                transaction.onerror = function () {
-                    console.log('❌ Hubo un error al eliminar el cliente');
-                };
-            }
-        }
+        transaction.oncomplete = function () {
+          console.log("✅ Cliente eliminado correctamente");
+          e.target.parentElement.parentElement.remove();
+        };
+
+        transaction.onerror = function () {
+          console.log("❌ Hubo un error al eliminar el cliente");
+        };
+      }
+    }
+  }
+
+  function obtenerClientes() {
+    if (!DB) {
+      console.error("❌ Base de datos no inicializada");
+      return;
     }
 
-    function obtenerClientes() {
-        if (!DB) {
-            console.error('❌ Base de datos no inicializada');
-            return;
-        }
+    const objectStore = DB.transaction("crm").objectStore("crm");
 
-        const objectStore = DB.transaction('crm').objectStore('crm');
+    objectStore.openCursor().onsuccess = function (e) {
+      const cursor = e.target.result;
 
-        objectStore.openCursor().onsuccess = function (e) {
-            const cursor = e.target.result;
+      if (cursor) {
+        const { nombre, empresa, email, telefono, id } = cursor.value;
 
-            if (cursor) {
-                const { nombre, empresa, email, telefono, id } = cursor.value;
-
-                listadoClientes.innerHTML += ` 
+        listadoClientes.innerHTML += ` 
                     <tr>
                         <td class="px-6 py-4 border-b border-gray-200">
                             <p class="text-lg font-bold text-gray-700">${nombre}</p>
@@ -68,10 +66,10 @@
                     </tr>
                 `;
 
-                cursor.continue();
-            } else {
-                console.log('✅ No hay más registros');
-            }
-        };
-    }
+        cursor.continue();
+      } else {
+        console.log("✅ No hay más registros");
+      }
+    };
+  }
 })();
